@@ -102,6 +102,28 @@ namespace Fps
                 RegenPauseTime = 0,
             };
 
+            var playerInterest = new ComponentInterest
+            {
+                Queries = new List<ComponentInterest.Query>
+                {
+                    new ComponentInterest.Query
+                    {
+                        Constraint = new ComponentInterest.QueryConstraint
+                        {
+                            ComponentConstraint = Pol.PolController.ComponentId
+                        }
+                    }
+                }
+            };
+
+            var interestComponent = new Interest.Snapshot
+            {
+                ComponentInterest = new Dictionary<uint, ComponentInterest>
+                {
+                    { ClientMovement.ComponentId, playerInterest },
+                },
+            };
+
             var template = new EntityTemplate();
             template.AddComponent(pos, WorkerUtils.UnityGameLogic);
             template.AddComponent(new Metadata.Snapshot { EntityType = "Player" }, WorkerUtils.UnityGameLogic);
@@ -113,6 +135,7 @@ namespace Fps
             template.AddComponent(gunStateComponent, client);
             template.AddComponent(healthComponent, WorkerUtils.UnityGameLogic);
             template.AddComponent(healthRegenComponent, WorkerUtils.UnityGameLogic);
+            template.AddComponent(interestComponent, WorkerUtils.UnityClient);
             PlayerLifecycleHelper.AddPlayerLifecycleComponents(template, workerId, client, WorkerUtils.UnityGameLogic);
 
             template.SetReadAccess(WorkerUtils.UnityClient, WorkerUtils.UnityGameLogic, WorkerUtils.AndroidClient, WorkerUtils.iOSClient);
