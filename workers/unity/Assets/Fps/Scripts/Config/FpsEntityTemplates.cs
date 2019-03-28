@@ -7,6 +7,7 @@ using Improbable.Gdk.Movement;
 using Improbable.Gdk.PlayerLifecycle;
 using Improbable.Gdk.StandardTypes;
 using Improbable.PlayerLifecycle;
+using Pol;
 using UnityEngine;
 
 namespace Fps
@@ -28,6 +29,24 @@ namespace Fps
             template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
             return template;
+        }
+
+
+        public static EntityTemplate PolController(Vector3f position)
+        {
+            // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
+            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
+
+            var entityTemplate = new EntityTemplate();
+
+            entityTemplate.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Metadata.Snapshot("PolController"), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(polControllerComponent, WorkerUtils.UnityGameLogic);
+            entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient,WorkerUtils.SimulatedPlayerCoordinator);
+            entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+
+            return entityTemplate;
         }
 
         public static EntityTemplate SimulatedPlayerCoordinatorTrigger()
@@ -85,6 +104,28 @@ namespace Fps
                 RegenPauseTime = 0,
             };
 
+            var playerInterest = new ComponentInterest
+            {
+                Queries = new List<ComponentInterest.Query>
+                {
+                    new ComponentInterest.Query
+                    {
+                        Constraint = new ComponentInterest.QueryConstraint
+                        {
+                            ComponentConstraint = Pol.PolController.ComponentId
+                        }
+                    }
+                }
+            };
+
+            var interestComponent = new Interest.Snapshot
+            {
+                ComponentInterest = new Dictionary<uint, ComponentInterest>
+                {
+                    { ClientMovement.ComponentId, playerInterest },
+                },
+            };
+
             var template = new EntityTemplate();
             template.AddComponent(pos, WorkerUtils.UnityGameLogic);
             template.AddComponent(new Metadata.Snapshot { EntityType = "Player" }, WorkerUtils.UnityGameLogic);
@@ -96,6 +137,7 @@ namespace Fps
             template.AddComponent(gunStateComponent, client);
             template.AddComponent(healthComponent, WorkerUtils.UnityGameLogic);
             template.AddComponent(healthRegenComponent, WorkerUtils.UnityGameLogic);
+            template.AddComponent(interestComponent, WorkerUtils.UnityClient);
             PlayerLifecycleHelper.AddPlayerLifecycleComponents(template, workerId, client, WorkerUtils.UnityGameLogic);
 
             template.SetReadAccess(WorkerUtils.UnityClient, WorkerUtils.UnityGameLogic, WorkerUtils.AndroidClient, WorkerUtils.iOSClient);

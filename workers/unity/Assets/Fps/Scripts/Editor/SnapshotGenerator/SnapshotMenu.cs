@@ -32,6 +32,12 @@ namespace Fps
             // The local snapshot is identical to the cloud snapshot, but also includes a simulated player coordinator
             // trigger.
             var simulatedPlayerCoordinatorTrigger = FpsEntityTemplates.SimulatedPlayerCoordinatorTrigger();
+            var polController = FpsEntityTemplates.PolController(new Improbable.Vector3f(5, 0, 0));
+
+            cloudSnapshot.AddEntity(polController);
+            cloudSnapshot.AddEntity(simulatedPlayerCoordinatorTrigger);
+
+            localSnapshot.AddEntity(polController);
             localSnapshot.AddEntity(simulatedPlayerCoordinatorTrigger);
 
             SaveSnapshot(DefaultSnapshotPath, localSnapshot);
