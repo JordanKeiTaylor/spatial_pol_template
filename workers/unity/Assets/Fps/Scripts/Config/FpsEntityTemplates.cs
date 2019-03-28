@@ -7,6 +7,7 @@ using Improbable.Gdk.Movement;
 using Improbable.Gdk.PlayerLifecycle;
 using Improbable.Gdk.StandardTypes;
 using Improbable.PlayerLifecycle;
+using Pol;
 using UnityEngine;
 
 namespace Fps
@@ -28,6 +29,22 @@ namespace Fps
             template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
             return template;
+        }
+
+
+        public static EntityTemplate PolController(Vector3f position)
+        {
+            // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
+            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
+            var entityTemplate = new EntityTemplate();
+            entityTemplate.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Metadata.Snapshot("PolController"), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(polControllerComponent, WorkerUtils.UnityGameLogic);
+            entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient,WorkerUtils.SimulatedPlayerCoordinator);
+            entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+
+            return entityTemplate;
         }
 
         public static EntityTemplate SimulatedPlayerCoordinatorTrigger()
