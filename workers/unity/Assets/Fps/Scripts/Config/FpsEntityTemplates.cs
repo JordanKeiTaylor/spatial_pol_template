@@ -36,7 +36,9 @@ namespace Fps
         {
             // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
             var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
+
             var entityTemplate = new EntityTemplate();
+
             entityTemplate.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Metadata.Snapshot("PolController"), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);

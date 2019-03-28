@@ -24,6 +24,7 @@ public class SimulatedPlayerDriver : MonoBehaviour
     [Require] private HealthComponentReader HealthReader;
     [Require] private HealthComponentCommandSender HealthCommands;
     [Require] private EntityId entityId;
+    [Require] private Pol.PolControllerReader polController;
 
     private ClientMovementDriver movementDriver;
     private ClientShooting shooting;
@@ -208,7 +209,7 @@ public class SimulatedPlayerDriver : MonoBehaviour
     {
         var agentPosition = agent.nextPosition;
         var direction = (destination - agentPosition).normalized;
-        var desiredVelocity = direction * movementDriver.GetSpeed(speed);
+        var desiredVelocity = direction * movementDriver.GetSpeed(speed) * polController.Data.RobotsActive;
 
         // Setting nextPosition will move the agent towards destination, but is constrained by the navmesh
         agent.nextPosition += desiredVelocity * Time.deltaTime;
