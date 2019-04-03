@@ -58,7 +58,7 @@ namespace Fps
             {
                 var x = Random.Range(-150, 150);
                 var z = Random.Range(-150, 150);
-                var polEntity = Fps.FpsEntityTemplates.PolEntity(new Vector3f(x,0,z));
+                var polEntity = Fps.FpsEntityTemplates.PolEntity(new Vector3f(x,0,z),(uint) i%4);
                 // Add the entity template to the snapshot.
                 snapshot.AddEntity(polEntity);
 

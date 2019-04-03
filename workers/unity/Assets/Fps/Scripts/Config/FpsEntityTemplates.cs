@@ -31,18 +31,45 @@ namespace Fps
             return template;
         }
 
-        public static EntityTemplate PolEntity(Vector3f position)
+        public static EntityTemplate PolEntity(Vector3f position,uint tribe)
         {
 
-            var metadata = new Metadata.Snapshot { EntityType = "PlayerCreator" };
+            var metadata = new Metadata.Snapshot { EntityType = "PolEntity" };
 
             var template = new EntityTemplate();
             template.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
             template.AddComponent(metadata, WorkerUtils.UnityGameLogic);
             template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
-           
-            template.SetReadAccess(WorkerUtils.UnityGameLogic);
+            template.AddComponent(new Pol.PolEntityData.Snapshot(true,tribe,1), WorkerUtils.UnityGameLogic);
+            template.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient);
             template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+
+            var playerInterest = new ComponentInterest
+            {
+                Queries = new List<ComponentInterest.Query>
+                {
+                    new ComponentInterest.Query
+                    {
+                        Constraint = new ComponentInterest.QueryConstraint
+                        {
+                            ComponentConstraint = Pol.PolController.ComponentId,
+                            AndConstraint = new List<ComponentInterest.QueryConstraint>(),
+                            OrConstraint = new List<ComponentInterest.QueryConstraint>()
+                        },FullSnapshotResult = true,
+                        ResultComponentId = new List<uint>(),
+                    }
+                }
+            };
+
+            var interestComponent = new Interest.Snapshot
+            {
+                ComponentInterest = new Dictionary<uint, ComponentInterest>
+                {
+                    { PolEntityData.ComponentId, playerInterest },
+                },
+            };
+
+            template.AddComponent(interestComponent, WorkerUtils.UnityGameLogic);
 
             return template;
         }
@@ -61,6 +88,34 @@ namespace Fps
             entityTemplate.AddComponent(polControllerComponent, WorkerUtils.UnityGameLogic);
             entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient,WorkerUtils.SimulatedPlayerCoordinator);
             entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+            entityTemplate.SetComponentWriteAccess(polControllerComponent.ComponentId, WorkerUtils.UnityGameLogic);
+
+            var polEntityInterest = new ComponentInterest
+            {
+                Queries = new List<ComponentInterest.Query>
+                {
+                    new ComponentInterest.Query
+                    {
+                        Constraint = new ComponentInterest.QueryConstraint
+                        {
+                            ComponentConstraint = Pol.PolEntityData.ComponentId,
+                            AndConstraint = new List<ComponentInterest.QueryConstraint>(),
+                            OrConstraint = new List<ComponentInterest.QueryConstraint>()
+                        },FullSnapshotResult = true,
+                        ResultComponentId = new List<uint>(),
+                    }
+                }
+            };
+
+            var interestComponent = new Interest.Snapshot
+            {
+                ComponentInterest = new Dictionary<uint, ComponentInterest>
+                {
+                    { polControllerComponent.ComponentId, polEntityInterest },
+                },
+            };
+
+           entityTemplate.AddComponent(interestComponent, WorkerUtils.UnityGameLogic);
 
             return entityTemplate;
         }

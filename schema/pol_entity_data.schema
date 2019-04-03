@@ -1,0 +1,8 @@
+package pol;
+ 
+component PolEntityData {
+    id = 21002;
+    bool is_active = 1;
+    uint32 tribe = 2;
+    uint32 status = 3;
+}
