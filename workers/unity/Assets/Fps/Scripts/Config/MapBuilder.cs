@@ -445,7 +445,7 @@ namespace Fps
             switch (worldSize)
             {
                 case SmallLevelFlag:
-                    worldLayerCount = mapBuilderSettings.SmallWorldLayerCount;
+                    worldLayerCount = 4;
                     break;
                 case LargeLevelFlag:
                     worldLayerCount = mapBuilderSettings.LargeWorldLayerCount;

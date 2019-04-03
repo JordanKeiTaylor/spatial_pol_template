@@ -3,6 +3,7 @@ using Improbable.Gdk.Core;
 using Improbable.Gdk.DeploymentManager;
 using UnityEditor;
 using UnityEngine;
+using Improbable;
 
 namespace Fps
 {
@@ -36,12 +37,33 @@ namespace Fps
 
             cloudSnapshot.AddEntity(polController);
             cloudSnapshot.AddEntity(simulatedPlayerCoordinatorTrigger);
+            AddPolEntities(cloudSnapshot, 100);
 
             localSnapshot.AddEntity(polController);
+            AddPolEntities(localSnapshot,100);
             localSnapshot.AddEntity(simulatedPlayerCoordinatorTrigger);
 
             SaveSnapshot(DefaultSnapshotPath, localSnapshot);
             SaveSnapshot(CloudSnapshotPath, cloudSnapshot);
+        }
+
+
+        private static void AddPolEntities(Snapshot snapshot, int numEntities)
+        {
+
+
+            
+            
+            for(int i = 10;i< numEntities; i++)
+            {
+                var x = Random.Range(-150, 150);
+                var z = Random.Range(-150, 150);
+                var polEntity = Fps.FpsEntityTemplates.PolEntity(new Vector3f(x,0,z),(uint) i%4);
+                // Add the entity template to the snapshot.
+                snapshot.AddEntity(polEntity);
+
+            }
+         
         }
 
         private static void SaveSnapshot(string path, Snapshot snapshot)
