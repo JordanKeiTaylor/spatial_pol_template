@@ -31,6 +31,22 @@ namespace Fps
             return template;
         }
 
+        public static EntityTemplate PolEntity(Vector3f position)
+        {
+
+            var metadata = new Metadata.Snapshot { EntityType = "PlayerCreator" };
+
+            var template = new EntityTemplate();
+            template.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
+            template.AddComponent(metadata, WorkerUtils.UnityGameLogic);
+            template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
+           
+            template.SetReadAccess(WorkerUtils.UnityGameLogic);
+            template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+
+            return template;
+        }
+
 
         public static EntityTemplate PolController(Vector3f position)
         {
