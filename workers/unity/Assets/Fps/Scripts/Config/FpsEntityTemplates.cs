@@ -75,7 +75,7 @@ namespace Fps
         }
 
 
-        public static EntityTemplate PolController(Vector3f position)
+        public static EntityTemplate PolControllerEntity(Vector3f position)
         {
             // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
             var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
@@ -88,7 +88,7 @@ namespace Fps
             entityTemplate.AddComponent(polControllerComponent, WorkerUtils.UnityGameLogic);
             entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient,WorkerUtils.SimulatedPlayerCoordinator);
             entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
-            entityTemplate.SetComponentWriteAccess(polControllerComponent.ComponentId, WorkerUtils.UnityGameLogic);
+            entityTemplate.SetComponentWriteAccess(PolController.ComponentId, WorkerUtils.UnityGameLogic);
 
             var polEntityInterest = new ComponentInterest
             {

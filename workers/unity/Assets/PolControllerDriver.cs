@@ -9,22 +9,26 @@ namespace Fps
     public class PolControllerDriver : MonoBehaviour
     {
         [Require] private Improbable.PositionReader positionReader;
-        [Require] private Pol.PolEntityDataReader polEntityDataReader;
         [Require] private Pol.PolControllerWriter polControllerWriter;
-        [Require] private Pol.PolControllerReader polControllerReader;
-        private MeshRenderer cubeMeshRenderer;
+ 
+       
         private Coroutine polUpdateCoroutine;
+
+        private void Awake()
+        {
+
+        }
 
         private void OnEnable()
         {
-            cubeMeshRenderer = GetComponentInChildren<MeshRenderer>();
-            cubeMeshRenderer.enabled = true;
-            UpdateVisibility();
+
+
             polUpdateCoroutine = StartCoroutine(sendPOLUpdateRoutine());
             polControllerWriter.SendUpdate(new PolController.Update
             {
                 RobotsActive = 2
             });
+            InvokeRepeating("SendPolUpdate", 3.0f, 3.0f);
 
         }
 
@@ -32,7 +36,7 @@ namespace Fps
         {
             polControllerWriter.SendUpdate(new PolController.Update
             {
-                RobotsActive = polControllerReader.Data.RobotsActive + 1
+                RobotsActive = polControllerWriter.Data.RobotsActive + 1
             });
         }
 
@@ -44,10 +48,7 @@ namespace Fps
             }
         }
 
-        private void UpdateVisibility()
-        {
-            cubeMeshRenderer.enabled = polEntityDataReader.Data.IsActive;
-        }
+       
 
         private IEnumerator sendPOLUpdateRoutine()
         {
