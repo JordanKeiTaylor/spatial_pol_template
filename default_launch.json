@@ -14,12 +14,11 @@
     "layer_configurations": [
       {
         "layer": "UnityGameLogic",
-        "rectangle_grid": {
-          "cols": 2,
-          "rows": 2
-        },
+        "hex_grid": {
+                "num_workers": 4
+            },
         "options": {
-          "manual_worker_connection_only": false
+          "manual_worker_connection_only": true
         }
       },
       {
