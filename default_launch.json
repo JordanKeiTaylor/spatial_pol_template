@@ -15,11 +15,11 @@
       {
         "layer": "UnityGameLogic",
         "rectangle_grid": {
-          "cols": 1,
-          "rows": 1
+          "cols": 2,
+          "rows": 2
         },
         "options": {
-          "manual_worker_connection_only": true
+          "manual_worker_connection_only": false
         }
       },
       {

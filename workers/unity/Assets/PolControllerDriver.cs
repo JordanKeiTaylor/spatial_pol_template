@@ -10,8 +10,9 @@ namespace Fps
     {
         [Require] private Improbable.PositionReader positionReader;
         [Require] private Pol.PolControllerWriter polControllerWriter;
- 
-       
+      
+
+
         private Coroutine polUpdateCoroutine;
 
         private void Awake()

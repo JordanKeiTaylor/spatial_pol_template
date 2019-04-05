@@ -3,6 +3,7 @@ using Improbable.Gdk.Health;
 using Unity.Collections;
 using Unity.Entities;
 using Pol;
+using Improbable;
 
 namespace Pol
 {
@@ -10,32 +11,43 @@ namespace Pol
 
     public class PolSystem : ComponentSystem
     {
-        private struct Data
+        private struct PolEntityData
         {
             public readonly int Length;
-            public ComponentDataArray<Pol.PolEntityData.Component> PolEntityDataComponents;
-            [ReadOnly] public ComponentDataArray<Pol.PolController.ReceivedUpdates> Updates;
+            public ComponentDataArray<Pol.PolEntityData.Component> PolEntityComponents;
+          
+        }
+        
+        private struct UpdatesData
+        {
+            public readonly int Length;
+            public ComponentDataArray<PolController.ReceivedUpdates> interestUpdates;
+
         }
 
-        [Inject] private Data data;
+
+
+        [Inject] private PolEntityData data;
+        [Inject] private UpdatesData updatesData;
+
 
         protected override void OnUpdate()
         {
-            for (var i = 0; i < data.Length; ++i)
+            for (var i = 0; i < updatesData.Length; ++i)
             {
-                var updates = data.Updates[i].Updates;
+                var updates = updatesData.interestUpdates[i].Updates;
                 foreach (var update in updates)
                 {
-                    //assuming here there will only be one POLController update every 3 seconds, because of the logic in the POlController
-                    //if there are more frequent updates, will need to change logic to stagger resulting updates to POL EntityData
                     for (var j = 0; j < data.Length; ++j)
                     {
-                        var component = data.PolEntityDataComponents[i];
-                        component.Status = update.RobotsActive * 2;
-                        data.PolEntityDataComponents[i] = component;
+                        var component = data.PolEntityComponents[j];
+                        component.Status = component.Status + 1;
+                        data.PolEntityComponents[j] = component;
                     }
                 }
             }
+
+
         }
     }
 
