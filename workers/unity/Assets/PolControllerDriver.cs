@@ -29,7 +29,7 @@ namespace Fps
             {
                 RobotsActive = 2
             });
-            InvokeRepeating("SendPolUpdate", 3.0f, 3.0f);
+            InvokeRepeating("SendPolUpdate", 4.0f, 4.0f);
 
         }
 
