@@ -19,7 +19,7 @@
           "rows": 2
         },
         "options": {
-          "manual_worker_connection_only": true
+          "manual_worker_connection_only": false
         }
       },
       {

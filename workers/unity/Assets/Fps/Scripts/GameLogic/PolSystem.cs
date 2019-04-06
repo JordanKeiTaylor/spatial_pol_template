@@ -7,14 +7,23 @@ namespace Pol
     public class PolSystem : ComponentSystem
     {
 
-        private readonly float last_update = -1;
+        private float last_update = -1;
+        private float rough_framerate = 1.0f / Time.deltaTime;
+        private uint current_robots_active;
         private struct PolEntityData
         {
             public readonly int Length;
             public ComponentDataArray<Pol.PolEntityData.Component> PolEntityComponents;
         }
 
+        private struct PolControllerData
+        {
+            public readonly int Length;
+            public ComponentDataArray<PolController.Component> PolControllerComponents;
+        }
+
         [Inject] private PolEntityData data;
+        [Inject] private PolControllerData controllerData;
 
         private ComponentUpdateSystem updateSystem;
 
@@ -25,15 +34,14 @@ namespace Pol
             updateSystem = World.GetExistingManager<ComponentUpdateSystem>();
         }
 
+
         protected override void OnUpdate()
         {
-            if((int) last_update != -1 && (int)Time.time - (int)last_update < 5000)
-            {
-                return;
-            }
+
             var updates = updateSystem.GetComponentUpdatesReceived<PolController.Update>();
             for (var k = 0; k < updates.Count; k++)
             {
+                current_robots_active = updates[0].Update.RobotsActive;
                 for (var j = 0; j < data.Length; ++j)
                 {
                     var component = data.PolEntityComponents[j];
