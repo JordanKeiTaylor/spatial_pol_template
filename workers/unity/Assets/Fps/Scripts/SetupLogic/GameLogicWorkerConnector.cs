@@ -26,6 +26,7 @@ namespace Fps
 
             // Shooting
             world.GetOrCreateManager<ServerShootingSystem>();
+            world.GetOrCreateManager<Pol.PolSystem>();
 
             // Metrics
             world.GetOrCreateManager<MetricSendSystem>();

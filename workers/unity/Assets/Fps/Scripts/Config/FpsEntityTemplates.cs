@@ -36,11 +36,27 @@ namespace Fps
 
             var metadata = new Metadata.Snapshot { EntityType = "PolEntity" };
 
+
+            var rotationUpdate = new RotationUpdate
+            {
+                Yaw = 0,
+                Pitch = 0
+            };
+
+            var serverResponse = new ServerResponse
+            {
+                Position = position.ToUnityVector3().ToIntAbsolute()
+            };
+
             var template = new EntityTemplate();
             template.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
             template.AddComponent(metadata, WorkerUtils.UnityGameLogic);
+            var clientRotation = new ClientRotation.Snapshot { Latest = rotationUpdate };
             template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
-            template.AddComponent(new Pol.PolEntityData.Snapshot(true,tribe,1), WorkerUtils.UnityGameLogic);
+            template.AddComponent(new Pol.PolEntityData.Snapshot(true,tribe,1,Behaviors.Behavior1), WorkerUtils.UnityGameLogic);
+            var serverMovement = new ServerMovement.Snapshot { Latest = serverResponse };
+            var clientMovement = new ClientMovement.Snapshot { Latest = new ClientRequest() };
+
             template.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient);
             template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
@@ -70,25 +86,31 @@ namespace Fps
             };
 
             template.AddComponent(interestComponent, WorkerUtils.UnityGameLogic);
+            template.AddComponent(serverMovement, WorkerUtils.UnityGameLogic);
+            template.AddComponent(clientMovement, WorkerUtils.UnityGameLogic);
+            template.AddComponent(clientRotation, WorkerUtils.UnityGameLogic);
 
             return template;
         }
 
 
-        public static EntityTemplate PolController(Vector3f position)
+        public static EntityTemplate PolControllerEntity(Vector3f position)
         {
             // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
-            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
+            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, uint>());
 
             var entityTemplate = new EntityTemplate();
+
+           
 
             entityTemplate.AddComponent(new Position.Snapshot(new Coordinates(position.X, position.Y, position.Z)), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Metadata.Snapshot("PolController"), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(polControllerComponent, WorkerUtils.UnityGameLogic);
             entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient,WorkerUtils.SimulatedPlayerCoordinator);
+
             entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
-            entityTemplate.SetComponentWriteAccess(polControllerComponent.ComponentId, WorkerUtils.UnityGameLogic);
+            entityTemplate.SetComponentWriteAccess(PolController.ComponentId, WorkerUtils.UnityGameLogic);
 
             var polEntityInterest = new ComponentInterest
             {

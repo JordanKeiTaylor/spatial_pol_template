@@ -1,8 +1,16 @@
 package pol;
+
+	
+enum Behaviors {
+  Behavior1 = 0;
+  Behavior2 = 1;
+  Behavior3 = 2;
+}
  
 component PolEntityData {
     id = 21002;
     bool is_active = 1;
     uint32 tribe = 2;
     uint32 status = 3;
+    Behaviors behavior = 4;
 }
