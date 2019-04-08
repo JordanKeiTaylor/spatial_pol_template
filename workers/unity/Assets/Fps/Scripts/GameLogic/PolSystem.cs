@@ -68,6 +68,10 @@ namespace Pol
             }
         }
 
+        //this function is an example of how a global "push" update, from a model controller, out to PolEntities, could be managed
+        //Currently the function simply aggregates the number of each tribe that are out of bounds, and adjusts their behavior accordingly
+        //It also (to demonstrate how the PolController could be updated) updates the Pol Controller, which triggers a set of updates to the status
+        //of the PolEntities. The latter is simply to show how one would listen for PolController updates and respond to them
         private void GlobalPolControllerUpdate()
         {
             var out_of_bounds = new Dictionary<uint, uint>();
@@ -168,6 +172,7 @@ namespace Pol
                 GlobalPolControllerUpdate();
             }
 
+            //for loop below checks for PolController updates every frame and responds to them by updating the status on all PolEntities
             var updates = updateSystem.GetComponentUpdatesReceived<PolController.Update>();
             for (var k = 0; k < updates.Count; k++)
             {
