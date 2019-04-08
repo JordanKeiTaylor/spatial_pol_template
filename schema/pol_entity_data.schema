@@ -12,4 +12,5 @@ component PolEntityData {
     bool is_active = 1;
     uint32 tribe = 2;
     uint32 status = 3;
+    Behaviors behavior = 4;
 }

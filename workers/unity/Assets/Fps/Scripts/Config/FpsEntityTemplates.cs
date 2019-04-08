@@ -53,7 +53,7 @@ namespace Fps
             template.AddComponent(metadata, WorkerUtils.UnityGameLogic);
             var clientRotation = new ClientRotation.Snapshot { Latest = rotationUpdate };
             template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
-            template.AddComponent(new Pol.PolEntityData.Snapshot(true,tribe,1), WorkerUtils.UnityGameLogic);
+            template.AddComponent(new Pol.PolEntityData.Snapshot(true,tribe,1,Behaviors.Behavior1), WorkerUtils.UnityGameLogic);
             var serverMovement = new ServerMovement.Snapshot { Latest = serverResponse };
             var clientMovement = new ClientMovement.Snapshot { Latest = new ClientRequest() };
 
