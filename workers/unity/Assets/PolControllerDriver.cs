@@ -4,7 +4,7 @@ using Improbable.Gdk.Subscriptions;
 using Pol;
 namespace Fps
 {
-
+    //Class deprecated -- all significant logic moved to PolSystem class
     [WorkerType(WorkerUtils.UnityGameLogic)]
     public class PolControllerDriver : MonoBehaviour
     {

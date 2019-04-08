@@ -4,5 +4,5 @@ component PolController {
     id = 21001;
     bool is_active = 1;
     uint32 robots_active = 2;
-    map<uint32, EntityId> entity_to_group_map = 3;
+    map<uint32, uint32> tribe_to_num_out_of_bound = 3;
 }

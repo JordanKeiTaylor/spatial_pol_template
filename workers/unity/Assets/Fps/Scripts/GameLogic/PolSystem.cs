@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Improbable.Gdk.Core;
 using Unity.Entities;
 using UnityEngine;
@@ -53,39 +54,66 @@ namespace Pol
                 switch (polData.Behavior)
                 {
                     case Behaviors.Behavior1:
-                        MoveUpRight(j);
+                        MoveUp(j);
                         break;
                     case Behaviors.Behavior2:
-                        MoveUpLeft(j);
+                        MoveDown(j);
                         break;
                     case Behaviors.Behavior3:
-                        MoveDownRight(j);
+                        MoveDown(j);
                         break;
 
                 }
-                var destination = new Improbable.Coordinates(0, 0, 0);
-                var component = positionData.PositionComponents[j];
-                var origin = component.Coords;
-                var x_diff = (destination.X - origin.X) / (destination.Y - origin.X);
-                var x_sign = Mathf.Sign((float)destination.X - (float)origin.X);
-                var y_sign = Mathf.Sign((float)destination.Y - (float)origin.Y);
-
-                component.Coords = new Improbable.Coordinates
-                {
-                    X = x_sign * origin.X + (0.05 * x_diff),
-                    Y = y_sign * origin.Y + (0.05 * 1 / x_diff),
-                    Z = origin.Z + 0.05
-                };
-                positionData.PositionComponents[j] = component;
+               
             }
         }
 
         private void GlobalPolControllerUpdate()
         {
+            var out_of_bounds = new Dictionary<uint, uint>();
+
+
             for (var j = 0; j < controllerData.Length; ++j)
             {
 
                 var controller = controllerData.PolControllerComponents[j];
+                for(var i = 0; i < data.Length; ++i)
+                {
+                    var entityData = data.PolEntityComponents[i];
+                    var tribe = entityData.Tribe;
+                    var position = positionData.PositionComponents[i].Coords;
+                    if(position.X > 200 || position.X < -200 || position.Z > 200 || position.Z <-200)
+                    {
+                        if (out_of_bounds.ContainsKey(tribe))
+                        {
+                            out_of_bounds.Add(tribe, out_of_bounds[tribe] + 1);
+                        }
+                        else
+                        {
+                            out_of_bounds.Add(tribe, 1);
+                        }
+                    }
+                }
+
+
+
+                for (var i = 0; i < data.Length; ++i)
+                {
+                    var entityData = data.PolEntityComponents[i];
+                    var tribe = entityData.Tribe;
+                    var behavior = entityData.Behavior;
+                    if (out_of_bounds.ContainsKey(tribe) && out_of_bounds[tribe] > 15 && behavior == Behaviors.Behavior1)
+                    {
+                        entityData.Behavior = Behaviors.Behavior2;
+
+                    }
+                    if (out_of_bounds.ContainsKey(tribe) && out_of_bounds[tribe] > 15 && behavior == Behaviors.Behavior2)
+                    {
+                        entityData.Behavior = Behaviors.Behavior1;
+
+                    }
+                    data.PolEntityComponents[i] = entityData;
+                }
 
 
                 controller.RobotsActive = controller.RobotsActive + 1;
@@ -93,7 +121,7 @@ namespace Pol
             }
         }
 
-        private void MoveUpRight(int entityIndex)
+        private void MoveUp(int entityIndex)
         {
             
            
@@ -103,45 +131,26 @@ namespace Pol
 
                 component.Coords = new Improbable.Coordinates
                 {
-                    X = origin.X + 0.05,
-                    Y =origin.Y + 0.05,
-                    Z = origin.Z + 0.05
+                    X = origin.X,
+                    Z = origin.Z + 1,
+                    Y = origin.Y
+
                 };
                 positionData.PositionComponents[entityIndex] = component;
             
         }
 
-        private void MoveDownRight(int entityIndex)
+        private void MoveDown(int entityIndex)
         {
-
-
             var component = positionData.PositionComponents[entityIndex];
             var origin = component.Coords;
 
 
             component.Coords = new Improbable.Coordinates
             {
-                X = origin.X - 0.05,
-                Y = origin.Y + 0.05,
-                Z = origin.Z + 0.05
-            };
-            positionData.PositionComponents[entityIndex] = component;
-
-        }
-
-        private void MoveUpLeft(int entityIndex)
-        {
-
-
-            var component = positionData.PositionComponents[entityIndex];
-            var origin = component.Coords;
-
-
-            component.Coords = new Improbable.Coordinates
-            {
-                X = origin.X + 0.05,
-                Y = origin.Y + 0.05,
-                Z = origin.Z - 0.05
+                X = origin.X,
+                Z = origin.Z - 1,
+                Y = origin.Y
             };
             positionData.PositionComponents[entityIndex] = component;
 
@@ -150,11 +159,11 @@ namespace Pol
         protected override void OnUpdate()
         {
             frames++;
-            if(frames%100 == 0)
+            if(frames%60 == 0)
             {
                 DoPolBehavior();
             }
-            if(frames % 400 == 0)
+            if(frames % 1200 == 0)
             {
                 GlobalPolControllerUpdate();
             }

@@ -26,11 +26,7 @@ namespace Fps {
         private void Update()
         {
            
-            //polEntityDataWriter.SendUpdate(new PolEntityData.Update
-            //{
-            //    Status = polEntityDataWriter.Data.Status + 1
-            //});
-
+           
         }
 
       

@@ -97,7 +97,7 @@ namespace Fps
         public static EntityTemplate PolControllerEntity(Vector3f position)
         {
             // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
-            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, EntityId>());
+            var polControllerComponent = new PolController.Snapshot(true, 0, new Dictionary<uint, uint>());
 
             var entityTemplate = new EntityTemplate();
 
