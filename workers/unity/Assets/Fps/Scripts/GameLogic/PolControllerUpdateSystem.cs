@@ -5,7 +5,7 @@ using Unity.Entities;
 using Pol;
 using Improbable;
 
-//DEPRECATED IN FAVOR OF POLSYSTEM CLASS
+//DEPRECATED, USE POLSYSTEM CLASS INSTEAD
 namespace Pol
 {
 
