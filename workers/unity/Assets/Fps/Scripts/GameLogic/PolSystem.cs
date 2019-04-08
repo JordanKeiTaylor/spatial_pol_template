@@ -7,9 +7,10 @@ namespace Pol
     public class PolSystem : ComponentSystem
     {
 
-        private float last_update = Time.time;
+        private int frames = 0;
         private float rough_framerate = 1.0f / Time.deltaTime;
         private uint current_robots_active;
+
         private struct PolEntityData
         {
             public readonly int Length;
@@ -48,15 +49,19 @@ namespace Pol
 
         private void MoveTowards(Improbable.Coordinates destination)
         {
-
+            
             for (var j = 0; j < data.Length; ++j)
             {
                 var component = positionData.PositionComponents[j];
                 var origin = component.Coords;
+                var x_diff = (destination.X - origin.X) / (destination.Y - origin.X);
+                var x_sign = Mathf.Sign((float) destination.X - (float)origin.X);
+                var y_sign = Mathf.Sign((float)destination.Y - (float)origin.Y);
+
                 component.Coords = new Improbable.Coordinates
                 {
-                    X = origin.X + 0.05,
-                    Y =  origin.Y + 0.001,
+                    X = x_sign * origin.X + (0.05 * x_diff),
+                    Y =y_sign * origin.Y + (0.05 * 1/x_diff),
                     Z = origin.Z + 0.05
                 };
                 positionData.PositionComponents[j] = component;
@@ -65,7 +70,12 @@ namespace Pol
 
         protected override void OnUpdate()
         {
-            MoveTowards(new Improbable.Coordinates(0, 0, 0));
+            frames++;
+            if(frames%10 == 0)
+            {
+                MoveTowards(new Improbable.Coordinates(0, 0, 0));
+            }
+
             var updates = updateSystem.GetComponentUpdatesReceived<PolController.Update>();
             for (var k = 0; k < updates.Count; k++)
             {

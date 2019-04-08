@@ -1,4 +1,11 @@
 package pol;
+
+	
+enum Behaviors {
+  Behavior1 = 0;
+  Behavior2 = 1;
+  Behavior3 = 2;
+}
  
 component PolEntityData {
     id = 21002;
